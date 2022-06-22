@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using Rgm.Repository.Context;
 using Rgm.DataAcessLayer.CrosCutting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace application
 {
@@ -39,37 +40,36 @@ namespace application
                 .Configure(tokenConfiguration);
             services.AddSingleton(tokenConfiguration);
 
-            //services.AddAuthentication(authOptions =>
-            //{
-            //    authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}).AddJwtBearer(bearerOptions =>
-            //{
-            //    var paramsValidation = bearerOptions.TokenValidationParameters;
-            //    paramsValidation.IssuerSigningKey = signingConfigurations.Key;
-            //    paramsValidation.ValidAudience = tokenConfiguration.Audience;
-            //    paramsValidation.ValidIssuer = tokenConfiguration.Issuer;
+            services.AddAuthentication(authOptions =>
+            {
+                authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearerOptions =>
+            {
+                var paramsValidation = bearerOptions.TokenValidationParameters;
+                paramsValidation.IssuerSigningKey = signingConfigurations.Key;
+                paramsValidation.ValidAudience = tokenConfiguration.Audience;
+                paramsValidation.ValidIssuer = tokenConfiguration.Issuer;
 
-            //    // Valida a assinatura de um token recebido
-            //    paramsValidation.ValidateIssuerSigningKey = true;
+                // Valida a assinatura de um token recebido
+                paramsValidation.ValidateIssuerSigningKey = true;
 
-            //    // Verifica se um token recebido ainda é válido
-            //    paramsValidation.ValidateLifetime = true;
+                // Verifica se um token recebido ainda é válido
+                paramsValidation.ValidateLifetime = true;
 
-            //    // Tempo de tolerância para a expiração de um token (utilizado
-            //    // caso haja problemas de sincronismo de horário entre diferentes
-            //    // computadores envolvidos no processo de comunicação)
-            //    paramsValidation.ClockSkew = TimeSpan.Zero;
-            //});
+                // Tempo de tolerância para a expiração de um token (utilizado
+                // caso haja problemas de sincronismo de horário entre diferentes
+                // computadores envolvidos no processo de comunicação)
+                paramsValidation.ClockSkew = TimeSpan.Zero;
+            });
 
-            // Ativa o uso do token como forma de autorizar o acesso
-            // a recursos deste projeto
-            //services.AddAuthorization(auth =>
-            //{
-            //    auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
-            //        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
-            //        .RequireAuthenticatedUser().Build());
-            //});
+            //Ativa o uso do token como forma de autorizar o acesso a recursos deste projeto
+            services.AddAuthorization(auth =>
+            {
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
+                    .RequireAuthenticatedUser().Build());
+            });
 
 
 
@@ -99,8 +99,8 @@ namespace application
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "RGM",
-                    Description = "Api RGM",
+                    Title = "Engage Connect",
+                    Description = "Api Engage Connect",
                 });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -140,13 +140,13 @@ namespace application
             app.UseSwagger();
             //app.UseSwaggerUI(c =>
             //{
-            //    c.SwaggerEndpoint("./swagger/v1/swagger.json", "CMM.Api");
+            //    c.SwaggerEndpoint("./swagger/v1/swagger.json", "Engage Connect");
             //    c.RoutePrefix = string.Empty;
             //});
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("./v1/swagger.json", "CMM.Api");
+                c.SwaggerEndpoint("./v1/swagger.json", "Engage Connect");
                 c.RoutePrefix = "swagger";
             });
 
